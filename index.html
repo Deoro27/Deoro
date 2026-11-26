@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para ti, mi amor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500;1,9..144,400;1,9..144,500&family=Nunito:wght@400;600;700&family=Playpen+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Una sola columna suave: flores arriba, carta en medio, corazón al final. */
+  :root {
+    --bg: #fff0f4;
+    --bg-deep: #ffe0ea;
+    --petal: #f7a8c4;
+    --rose: #d94b82;
+    --rose-deep: #b8346b;
+    --ink: #6b2442;
+    --paper: #fffaf8;
+    --sage: #8fc4a0;
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+    --hand: "Playpen Sans", "Comic Sans MS", cursive;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { background: linear-gradient(180deg, #f7c0d2 0%, #ffbf86 55%, #ff8f4f 100%); }
+  body {
+    margin: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  /* Atardecer y bosque fijos al fondo */
+  .sky { position: fixed; left: 0; top: 0; width: 100%; height: 100%; height: 100lvh; z-index: -2; display: block; }
+  .flies { position: fixed; left: 0; right: 0; bottom: 0; height: 38%; z-index: -1; pointer-events: none; }
+  .flies i {
+    position: absolute; width: 5px; height: 5px; border-radius: 50%;
+    background: #ffe9a8; box-shadow: 0 0 8px 3px rgba(255, 214, 120, .85);
+    animation: fly var(--t, 9s) ease-in-out infinite, blink var(--b, 3s) ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes fly {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(14px, -18px); }
+    66% { transform: translate(-12px, -8px); }
+  }
+  @keyframes blink { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(3.5rem, 9vw, 6rem);
+    padding: clamp(1.5rem, 5vw, 3rem) 1rem clamp(4rem, 10vw, 7rem);
+  }
+  section { width: 100%; max-width: 40rem; display: flex; flex-direction: column; align-items: center; }
+
+  /* ---------- Flores ---------- */
+  .garden {
+    width: 100%;
+    background: linear-gradient(180deg, #fff9fa 0%, #ffe4ed 100%);
+    border-radius: 2.2rem;
+    box-shadow: 0 1.2rem 3rem -1.4rem rgba(184, 52, 107, .45), inset 0 0 0 .3rem #fff;
+    padding: 1.4rem 1rem 0;
+    overflow: hidden;
+  }
+  .garden svg { display: block; width: 100%; height: auto; }
+  .sway { animation: sway 6s ease-in-out infinite; }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-1.6deg); }
+    50% { transform: rotate(1.6deg); }
+  }
+  .message {
+    margin: 1.6rem 0 0;
+    padding: 1.1rem 1.4rem;
+    background: rgba(255, 246, 248, .86);
+    border-radius: 1.4rem;
+    box-shadow: 0 .8rem 2rem -1rem rgba(120, 30, 60, .5);
+    max-width: 30rem;
+    text-align: center;
+    font-family: var(--hand);
+    font-weight: 500;
+    font-size: clamp(1.2rem, 4.4vw, 1.55rem);
+    line-height: 1.7;
+    color: var(--rose-deep);
+    text-wrap: balance;
+  }
+
+  /* ---------- Carta ---------- */
+  .hint {
+    margin: 0 0 1.2rem;
+    padding: .35rem 1.1rem;
+    background: rgba(255, 246, 248, .86);
+    border-radius: 2rem;
+    font-family: var(--hand);
+    font-size: 1.1rem;
+    color: var(--rose-deep);
+  }
+  .env-btn {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: min(21rem, 86vw);
+    aspect-ratio: 340 / 230;
+    position: relative;
+    perspective: 900px;
+    -webkit-tap-highlight-color: transparent;
+    filter: drop-shadow(0 .9rem 1rem rgba(184, 52, 107, .28));
+    transition: transform .25s ease, margin-top .6s ease;
+  }
+  .env-btn.open { margin-top: calc(min(21rem, 86vw) * .38 + .8rem); }
+  .env-btn:hover { transform: translateY(-3px) rotate(-.6deg); }
+  .env-btn:focus-visible { outline: .22rem solid var(--rose-deep); outline-offset: .5rem; border-radius: .8rem; }
+  .env-back, .env-front, .env-flap, .env-paper { position: absolute; }
+  .env-back { inset: 0; background: #f48fb1; border-radius: .7rem; }
+  .env-paper {
+    left: 7%; right: 7%; top: 6%; bottom: 8%;
+    background: var(--paper);
+    border-radius: .4rem;
+    transition: transform .6s .35s cubic-bezier(.3, .9, .3, 1);
+  }
+  .env-paper::before, .env-paper::after {
+    content: ""; position: absolute; left: 14%; right: 14%; height: .28rem; border-radius: 1rem; background: #f9cadb;
+  }
+  .env-paper::before { top: 22%; }
+  .env-paper::after { top: 38%; right: 40%; }
+  .env-front {
+    inset: 0;
+    background: linear-gradient(180deg, #f9a8c4, #f48fb1);
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+    border-radius: .7rem;
+    z-index: 2;
+  }
+  .env-flap {
+    left: 0; right: 0; top: 0; height: 56%;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    z-index: 3;
+    transition: transform .6s cubic-bezier(.5, 0, .2, 1), z-index 0s .3s;
+  }
+  .env-flap i {
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .env-flap .out { background: #ee7ba2; }
+  .env-flap .in { background: #fcd0df; transform: rotateX(180deg); }
+  .env-seal {
+    position: absolute; left: 50%; top: 47%; width: 3.1rem; transform: translate(-50%, -50%);
+    z-index: 4; transition: opacity .25s ease, transform .4s ease;
+  }
+  .open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .open .env-paper { transform: translateY(-26%); }
+  .open .env-seal { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+
+  .letter-wrap {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .9s .5s ease;
+  }
+  .letter-wrap > div { overflow: hidden; min-height: 0; }
+  .letter-wrap.show { grid-template-rows: 1fr; }
+  .letter {
+    margin: 2rem 0 0;
+    background: var(--paper);
+    border-radius: 1.2rem;
+    padding: clamp(1.8rem, 6vw, 3.2rem) clamp(1.4rem, 6vw, 3.4rem);
+    box-shadow: 0 1.2rem 3rem -1.4rem rgba(184, 52, 107, .5), inset 0 0 0 .18rem #ffd3e2;
+    opacity: 0;
+    transform: translateY(1.2rem);
+    transition: opacity .7s .9s ease, transform .7s .9s ease;
+  }
+  .letter-wrap.show .letter { opacity: 1; transform: none; }
+  .letter h2 {
+    margin: 0 0 1.6rem;
+    text-align: center;
+    font-family: var(--display);
+    font-variation-settings: "SOFT" 100;
+    font-weight: 500;
+    font-size: clamp(1.7rem, 6vw, 2.3rem);
+    color: var(--rose-deep);
+    text-wrap: balance;
+  }
+  .letter h2::after {
+    content: ""; display: block; width: 3.5rem; height: .22rem; margin: .9rem auto 0; border-radius: 1rem; background: var(--petal);
+  }
+  .letter p {
+    margin: 0 0 1.5rem;
+    font-family: var(--display);
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    font-weight: 400;
+    font-size: clamp(1.08rem, 3.9vw, 1.25rem);
+    line-height: 1.75;
+    color: var(--ink);
+  }
+  .letter p:last-child { margin-bottom: 0; }
+
+  /* ---------- Corazón ---------- */
+  .heart-btn {
+    all: unset;
+    cursor: pointer;
+    position: relative;
+    display: block;
+    width: min(26rem, 92vw);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .heart-btn:focus-visible { outline: .22rem solid var(--rose-deep); outline-offset: .4rem; border-radius: 2rem; }
+  .heart-btn svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 1.1rem 1.1rem rgba(184, 52, 107, .38)); animation: beat 2.6s ease-in-out infinite; transform-origin: 50% 55%; }
+  @keyframes beat {
+    0%, 55%, 100% { transform: scale(1); }
+    62% { transform: scale(1.045); }
+    70% { transform: scale(1); }
+    78% { transform: scale(1.03); }
+  }
+  .heart-text {
+    position: absolute; left: 14%; right: 14%; top: 24%; bottom: 20%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; color: #fff;
+    font-family: var(--display);
+    font-variation-settings: "SOFT" 100;
+    text-shadow: 0 .1rem .5rem rgba(120, 20, 60, .35);
+    pointer-events: none;
+  }
+  .heart-text .l1 { font-weight: 500; font-size: clamp(1.45rem, 6.6vw, 2.15rem); line-height: 1.15; }
+  .heart-text .l2 { font-style: italic; font-size: clamp(1.1rem, 5vw, 1.6rem); margin-top: .35rem; }
+  .heart-text .l3 { font-style: italic; font-size: clamp(.98rem, 4.3vw, 1.4rem); margin-top: .1rem; }
+  .floaty { position: fixed; width: 1.3rem; height: 1.3rem; pointer-events: none; z-index: 20; animation: up 1.6s ease-out forwards; }
+  @keyframes up {
+    0% { opacity: 0; transform: translate(0, 0) scale(.4); }
+    15% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--dx), -9rem) scale(1.2); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sway, .heart-btn svg, .flies i { animation: none; }
+    .flies i { opacity: .8; }
+    .env-flap, .env-paper, .letter-wrap, .letter, .env-seal { transition-duration: .01s; transition-delay: 0s; }
+    .floaty { animation-duration: .01s; }
+  }
+</style>
+</head>
+<body>
+<canvas class="sky" id="sky" aria-hidden="true"></canvas>
+<div class="flies" id="flies" aria-hidden="true"></div>
+<main>
+
+  <section aria-label="Flores">
+    <div class="garden">
+      <svg id="flowers" viewBox="0 30 800 410" role="img" aria-label="Un ramo de flores rosadas moviéndose suavemente"></svg>
+    </div>
+    <p class="message">Quiero que esta página tenga algunas de las cosas que te gustan, siendo esta una de ellas. Porque a mí me gustas tú más que nada.</p>
+  </section>
+
+  <section aria-label="Carta">
+    <p class="hint" id="hint">Toca la carta para abrirla</p>
+    <button class="env-btn" id="env" type="button" aria-expanded="false" aria-controls="letter" aria-label="Abrir la carta">
+      <span class="env-back"></span>
+      <span class="env-paper"></span>
+      <span class="env-front"></span>
+      <span class="env-flap"><i class="out"></i><i class="in"></i></span>
+      <svg class="env-seal" viewBox="0 0 40 36" aria-hidden="true"><path d="M20 34 C 6 24 1 16 1 10 C 1 4.5 5.2 1 10 1 C 14 1 17.8 3.3 20 7 C 22.2 3.3 26 1 30 1 C 34.8 1 39 4.5 39 10 C 39 16 34 24 20 34 Z" fill="#c23473"/></svg>
+    </button>
+    <div class="letter-wrap" id="wrap">
+      <div>
+        <article class="letter" id="letter" aria-hidden="true" inert>
+          <h2>La luz del bosque</h2>
+          <p>Yo ya vivía en este bosque,<br>mucho antes de que llegaras tú.<br>Aprendí a caminarlo de noche,<br>a guiarme sin más brújula que la quietud.</p>
+          <p>Hasta le encontré su belleza:<br>el silencio de los troncos viejos,<br>el brillo tímido de la luna,<br>la calma de lo oscuro que ya es mío.</p>
+          <p>Pero llegaste tú, y fue como si<br>el mundo entero subiera el volumen del color:<br>el verde se hizo verde de verdad,<br>el ámbar de las hojas se volvió fuego suave,<br>y hasta las sombras aprendieron a ser tibias.</p>
+          <p>El bosque ya existía, mi amor,<br>yo ya lo había hecho mío.<br>Pero contigo se volvió hermoso,<br>porque tú eres la luz que lo hace respirar.<br>Por eso eres lo más importante para mí:<br>no porque me sacaras del bosque,<br>sino porque me enseñaste cómo se ve cuando lo miro contigo.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Corazón">
+    <button class="heart-btn" id="heart" type="button" aria-label="Te amo, mi amor. Siempre contigo. Eres la luz de mis ojos.">
+      <svg viewBox="0 0 200 180" aria-hidden="true">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e8639a"/>
+            <stop offset="1" stop-color="#b8346b"/>
+          </linearGradient>
+        </defs>
+        <path d="M100 172 C 40 128 6 92 6 56 C 6 28 28 8 54 8 C 74 8 91 18 100 36 C 109 18 126 8 146 8 C 172 8 194 28 194 56 C 194 92 160 128 100 172 Z" fill="url(#hg)"/>
+        <path d="M30 50 C 30 38 40 28 52 28" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="heart-text">
+        <span class="l1">Te amo, mi amor.</span>
+        <span class="l2">Siempre contigo.</span>
+        <span class="l3">Eres la luz de mis ojos</span>
+      </span>
+    </button>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("flowers");
+
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  // x base, altura de la cabeza (y), inclinación, radio, pétalos, color, delay
+  var plants = [
+    { x: 90,  y: 215, dx: 30,  r: 50, n: 8,  c: "#f7a8c4", d: 0 },
+    { x: 190, y: 150, dx: -20, r: 62, n: 9,  c: "#f48fb1", d: 1.2 },
+    { x: 300, y: 235, dx: 18,  r: 44, n: 7,  c: "#ffc2d6", d: 2.1 },
+    { x: 400, y: 110, dx: 0,   r: 72, n: 10, c: "#f9b4cc", d: .6 },
+    { x: 505, y: 225, dx: -16, r: 46, n: 8,  c: "#f48fb1", d: 1.7 },
+    { x: 610, y: 150, dx: 22,  r: 60, n: 9,  c: "#ffc2d6", d: .3 },
+    { x: 712, y: 220, dx: -26, r: 50, n: 8,  c: "#f7a8c4", d: 2.6 }
+  ];
+  var buds = [
+    { x: 145, y: 300, dx: 10 }, { x: 350, y: 290, dx: -8 }, { x: 455, y: 295, dx: 8 }, { x: 660, y: 300, dx: -10 }
+  ];
+
+  function stem(g, x, y, dx, color) {
+    var topx = x + dx;
+    el("path", { d: "M" + x + " 440 Q " + (x - dx * .6) + " " + ((440 + y) / 2) + " " + topx + " " + y,
+                 fill: "none", stroke: color, "stroke-width": 6, "stroke-linecap": "round" }, g);
+    // hojas
+    var ly = y + (440 - y) * .55, lx = x + dx * .35;
+    el("ellipse", { cx: lx - 16, cy: ly, rx: 20, ry: 8, fill: color, transform: "rotate(-28 " + lx + " " + ly + ")" }, g);
+    var ly2 = y + (440 - y) * .78, lx2 = x + dx * .15;
+    el("ellipse", { cx: lx2 + 16, cy: ly2, rx: 18, ry: 7, fill: color, transform: "rotate(26 " + lx2 + " " + ly2 + ")" }, g);
+    return topx;
+  }
+
+  function head(g, cx, cy, r, n, color) {
+    var h = el("g", { transform: "translate(" + cx + " " + cy + ")" }, g);
+    var i, a;
+    for (i = 0; i < n; i++) {
+      a = (360 / n) * i;
+      el("ellipse", { cx: 0, cy: -r * .55, rx: r * .27, ry: r * .5, fill: color, transform: "rotate(" + a + ")" }, h);
+    }
+    for (i = 0; i < n; i++) {
+      a = (360 / n) * i + 180 / n;
+      el("ellipse", { cx: 0, cy: -r * .38, rx: r * .2, ry: r * .34, fill: "#fff", "fill-opacity": .35, transform: "rotate(" + a + ")" }, h);
+    }
+    el("circle", { r: r * .26, fill: "#ffe08a" }, h);
+    el("circle", { r: r * .26, fill: "none", stroke: "#f6c453", "stroke-width": 2 }, h);
+    for (i = 0; i < 6; i++) {
+      a = i * 60 * Math.PI / 180;
+      el("circle", { cx: Math.cos(a) * r * .12, cy: Math.sin(a) * r * .12, r: 2, fill: "#f0b43a" }, h);
+    }
+  }
+
+  // Césped suave al fondo
+  el("path", { d: "M0 440 L0 418 Q 100 396 200 416 T 400 414 T 600 416 T 800 410 L800 440 Z", fill: "#cfe8d6" }, svg);
+
+  plants.forEach(function (p) {
+    var g = el("g", { "class": "sway" }, svg);
+    g.style.transformOrigin = p.x + "px 440px";
+    g.style.animationDelay = (-p.d) + "s";
+    var tx = stem(g, p.x, p.y, p.dx, "#8fc4a0");
+    head(g, tx, p.y, p.r, p.n, p.c);
+  });
+
+  buds.forEach(function (b, i) {
+    var g = el("g", { "class": "sway" }, svg);
+    g.style.transformOrigin = b.x + "px 440px";
+    g.style.animationDelay = (-(i * .9 + .4)) + "s";
+    var tx = stem(g, b.x, b.y, b.dx, "#8fc4a0");
+    el("ellipse", { cx: tx, cy: b.y - 8, rx: 11, ry: 17, fill: "#f48fb1" }, g);
+    el("path", { d: "M" + (tx - 12) + " " + (b.y + 2) + " Q " + tx + " " + (b.y + 14) + " " + (tx + 12) + " " + (b.y + 2) + " Q " + tx + " " + (b.y - 6) + " " + (tx - 12) + " " + (b.y + 2) + " Z", fill: "#8fc4a0" }, g);
+  });
+
+
+  // ---- Atardecer y bosque ----
+  var cv = document.getElementById("sky");
+  var ctx = cv.getContext("2d");
+  var lastW = 0;
+
+  function rng(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function cloud(cx, cy, w, h, a) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, h / w);
+    var g = ctx.createRadialGradient(0, 0, 0, 0, 0, w);
+    g.addColorStop(0, "rgba(255, 226, 214, " + a + ")");
+    g.addColorStop(.6, "rgba(255, 196, 176, " + (a * .55) + ")");
+    g.addColorStop(1, "rgba(255, 180, 160, 0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(0, 0, w, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function pine(x, base, th, tw, color) {
+    var tiers = 6, top = base - th, k, yb, wk;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    for (k = 0; k < tiers; k++) {
+      yb = top + th * (k + 1) / tiers * .94;
+      wk = tw * (.32 + .68 * (k + 1) / tiers);
+      ctx.lineTo(x + wk, yb);
+      if (k < tiers - 1) ctx.lineTo(x + wk * .45, yb - th / tiers * .14);
+    }
+    ctx.lineTo(x + tw * .08, yb); ctx.lineTo(x + tw * .08, base + 2);
+    ctx.lineTo(x - tw * .08, base + 2); ctx.lineTo(x - tw * .08, yb);
+    for (k = tiers - 1; k >= 0; k--) {
+      yb = top + th * (k + 1) / tiers * .94;
+      wk = tw * (.32 + .68 * (k + 1) / tiers);
+      ctx.lineTo(x - wk, yb);
+      if (k > 0) ctx.lineTo(x - wk * .45, yb - th / tiers * .94 - th / tiers * .14 + th / tiers * .94);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+
+  function round(x, base, th, tw, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x - tw * .06, base - th * .45, tw * .12, th * .5);
+    ctx.beginPath();
+    ctx.ellipse(x, base - th * .68, tw * .62, th * .34, 0, 0, Math.PI * 2);
+    ctx.ellipse(x - tw * .3, base - th * .5, tw * .42, th * .22, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + tw * .32, base - th * .52, tw * .4, th * .22, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function layer(w, h, o) {
+    var r = rng(o.seed), x = -30, th, tw, S = Math.min(h, w * 1.1);
+    ctx.fillStyle = o.color;
+    ctx.fillRect(0, o.base, w, h - o.base + 2);
+    while (x < w + 30) {
+      th = S * (o.minH + (o.maxH - o.minH) * Math.pow(r(), 1.3));
+      tw = th * (.2 + r() * .06);
+      if (r() < o.roundShare) round(x, o.base, th * .8, th * .5, o.color);
+      else pine(x, o.base, th, tw, o.color);
+      x += o.step * (.55 + r() * .8) * Math.min(1, S / 700);
+    }
+  }
+
+  function haze(w, y0, y1, a) {
+    var g = ctx.createLinearGradient(0, y0, 0, y1);
+    g.addColorStop(0, "rgba(255, 166, 112, 0)");
+    g.addColorStop(1, "rgba(255, 166, 112, " + a + ")");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, y0, w, y1 - y0);
+  }
+
+  function paint() {
+    var w = window.innerWidth, h = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    lastW = w;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var sky = ctx.createLinearGradient(0, 0, 0, h * .8);
+    sky.addColorStop(0, "#f6bcd2");
+    sky.addColorStop(.22, "#fbc2bf");
+    sky.addColorStop(.48, "#ffc08a");
+    sky.addColorStop(.78, "#ff9a55");
+    sky.addColorStop(1, "#ff8648");
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h);
+
+    var sx = w * .5, sy = h * .7, sr = Math.min(w, h) * .075;
+    var glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(w, h) * .55);
+    glow.addColorStop(0, "rgba(255, 244, 205, .95)");
+    glow.addColorStop(.12, "rgba(255, 214, 140, .7)");
+    glow.addColorStop(.45, "rgba(255, 170, 100, .22)");
+    glow.addColorStop(1, "rgba(255, 150, 90, 0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#fff3cf";
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+
+    cloud(w * .18, h * .2, w * .34, w * .05, .8);
+    cloud(w * .78, h * .14, w * .3, w * .04, .7);
+    cloud(w * .62, h * .36, w * .38, w * .05, .6);
+    cloud(w * .22, h * .5, w * .3, w * .035, .55);
+
+    layer(w, h, { base: h * .80, minH: .09, maxH: .15, step: 26, color: "#e08a86", seed: 11, roundShare: .25 });
+    haze(w, h * .66, h * .86, .35);
+    layer(w, h, { base: h * .87, minH: .12, maxH: .2,  step: 34, color: "#b8607c", seed: 23, roundShare: .15 });
+    haze(w, h * .72, h * .92, .22);
+    layer(w, h, { base: h * .94, minH: .16, maxH: .27, step: 46, color: "#823a63", seed: 37, roundShare: .1 });
+    layer(w, h, { base: h * 1.01, minH: .2, maxH: .34, step: 70, color: "#4a1b3a", seed: 51, roundShare: .05 });
+  }
+
+  paint();
+  window.addEventListener("resize", function () { if (window.innerWidth !== lastW) paint(); });
+
+  var fl = document.getElementById("flies"), fr = rng(7), i;
+  for (i = 0; i < 16; i++) {
+    var f = document.createElement("i");
+    f.style.left = (fr() * 96 + 2) + "%";
+    f.style.top = (fr() * 80 + 5) + "%";
+    f.style.setProperty("--t", (7 + fr() * 6) + "s");
+    f.style.setProperty("--b", (2.5 + fr() * 3) + "s");
+    f.style.setProperty("--d", (-fr() * 8) + "s");
+    fl.appendChild(f);
+  }
+
+  // ---- Carta ----
+  var env = document.getElementById("env");
+  var wrap = document.getElementById("wrap");
+  var letter = document.getElementById("letter");
+  var hint = document.getElementById("hint");
+
+  function setOpen(open) {
+    env.classList.toggle("open", open);
+    wrap.classList.toggle("show", open);
+    env.setAttribute("aria-expanded", open ? "true" : "false");
+    env.setAttribute("aria-label", open ? "Cerrar la carta" : "Abrir la carta");
+    letter.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open) letter.removeAttribute("inert"); else letter.setAttribute("inert", "");
+    hint.textContent = open ? "Toca otra vez para guardarla" : "Toca la carta para abrirla";
+    if (open) {
+      setTimeout(function () {
+        var r = letter.getBoundingClientRect();
+        if (r.top > window.innerHeight * .6) {
+          window.scrollBy({ top: Math.min(r.top - window.innerHeight * .25, 420), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+        }
+      }, 700);
+    }
+  }
+  env.addEventListener("click", function () { setOpen(!env.classList.contains("open")); });
+
+  // ---- Corazón ----
+  var heart = document.getElementById("heart");
+  heart.addEventListener("click", function (e) {
+    var r = heart.getBoundingClientRect();
+    var cx = e.clientX || (r.left + r.width / 2);
+    var cy = e.clientY || (r.top + r.height / 2);
+    for (var i = 0; i < 7; i++) {
+      var s = document.createElementNS(NS, "svg");
+      s.setAttribute("viewBox", "0 0 40 36");
+      s.setAttribute("class", "floaty");
+      s.setAttribute("aria-hidden", "true");
+      s.innerHTML = '<path d="M20 34 C 6 24 1 16 1 10 C 1 4.5 5.2 1 10 1 C 14 1 17.8 3.3 20 7 C 22.2 3.3 26 1 30 1 C 34.8 1 39 4.5 39 10 C 39 16 34 24 20 34 Z" fill="' + (i % 2 ? "#f48fb1" : "#e8639a") + '"/>';
+      s.style.left = (cx - 10 + (Math.random() * 60 - 30)) + "px";
+      s.style.top = (cy - 10) + "px";
+      s.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+      s.style.animationDelay = (i * 0.07) + "s";
+      document.body.appendChild(s);
+      setTimeout((function (n) { return function () { n.remove(); }; })(s), 2200);
+    }
+  });
+})();
+</script>
+</body>
+</html>
